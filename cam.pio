@@ -1,0 +1,29 @@
+.program cam
+
+; Used for gathering data from the hm01b0 camera 
+
+.wrap_target
+get_data:
+    wait 1 gpio 15 ; wait for hsync
+	wait 1 gpio 14 ; wait for rising edge of pclk
+	in pins 1 ; output data to isr (autopushed)
+	wait 0 gpio 14 ; wait for falling edge of pclk
+.wrap
+
+% c-sdk {
+
+    static inline void cam_program_init(PIO pio, uint sm, uint offset, uint pin) {
+        
+        pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, false);
+
+        pio_sm_config c = cam_program_get_default_config(offset);
+
+        sm_config_set_in_pins(&c, pin);
+        sm_config_set_in_shift(&c, false, true, 8);
+        sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+
+        pio_sm_init(pio, sm, offset, &c);
+        //pio_sm_set_enabled(pio, sm, true);
+    }
+
+%}
