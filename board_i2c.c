@@ -16,9 +16,9 @@ void cam_init(void) {
     gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
     gpio_set_function(3, GPIO_FUNC_PWM);
     gpio_set_dir(3, false);
-    pwm_set_clkdiv_int_frac(1, 1, 3); //1, 1, 4
-    pwm_set_wrap(1, 6); //1, 2
-    pwm_set_chan_level(1, 1, 3); //1, 1, 1
+    pwm_set_clkdiv_int_frac(1, 1, 0); //1, 1, 4
+    pwm_set_wrap(1, 4); //1, 2
+    pwm_set_chan_level(1, 1, 2); //1, 1, 1
     pwm_set_enabled(1, true);
 }
 
