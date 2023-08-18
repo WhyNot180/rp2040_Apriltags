@@ -13,7 +13,6 @@
 #include "image_capture.h"
 #include "st7735.h"
 uint8_t capture_buffer[244][324];
-uint8_t inter_buffer[80][160];
 uint8_t displayBuf[80*160*2];
 
 #define FLAG_VALUE 123
@@ -53,8 +52,8 @@ void core1_entry() {
                 uint8_t c = capture_buffer[ny][nx];
                 //printf("%i = %i\n", (2+320-2*y)*244+(2+40+2*x), capture_buffer[(2+320-2*y)*244+(2+40+2*x)]);
                 uint16_t imageRGB   = ST7735_COLOR565(c, c, c);
-                displayBuf[index++] = (uint8_t)(imageRGB >> 8) & 0xFF;
-                displayBuf[index++] = (uint8_t)(imageRGB)&0xFF;
+                displayBuf[index++] = (uint8_t)(imageRGB >> 8);// & 0xFF;
+                displayBuf[index++] = (uint8_t)(imageRGB);//&0xFF;
             }
 	    }
 	    ST7735_DrawImage(0, 0, 80, 160, displayBuf);
