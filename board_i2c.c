@@ -33,6 +33,8 @@ void cam_config(PIO pio, uint sm) {
     uint8_t clk[3] = {0x30, 0x67, 0x01}; //switches to MCLK mode
     uint8_t oscDiv[3] = {0x30, 0x60, 0x38}; //Enables MSB and divides sensor core by 8
 
+    uint8_t test_pattern[3] = {0x06, 0x01, 0x00}; //Enables test pattern and sets to walking 1s
+
     //uint8_t aGain[3] = {0x02, 0x05, 0x70}; //Sets Analog gain to 8x (aGain x dGain = final gain)
     //uint8_t dGain[3] = {0x02, 0x0E, 0x02}; //Sets Digital gain to 2x (aGain x dGain = final gain)
 
@@ -60,7 +62,7 @@ void cam_config(PIO pio, uint sm) {
     uint8_t ae_int_max_L[3] = {0x21, 0x06, 0x14}; //Sets auto exposure LSB of max integration
     uint8_t ae_int_min[3] = {0x21, 0x07, 0x02}; //Sets auto exposure min integration
     uint8_t ae_aGain_max_full[3] = {0x21, 0x08, 0x70}; //Sets auto exposure max aGain in full frame mode
-    uint8_t ae_aGain_max_bin[3] = {0x21, 0x09, 0x04}; //Sets auto exposure max aGain in bin2 mode
+    uint8_t ae_aGain_max_bin[3] = {0x21, 0x09, 0x70}; //Sets auto exposure max aGain in bin2 mode
     uint8_t ae_aGain_min[3] = {0x21, 0x0A, 0x00}; //Sets auto exposure min aGain
     uint8_t ae_dGain_max[3] = {0x21, 0x0B, 0xC0}; //Sets auto exposure max dGain
     uint8_t ae_dGain_min[3] = {0x21, 0x0C, 0x40}; //Sets auto exposure min dGain
@@ -73,23 +75,23 @@ void cam_config(PIO pio, uint sm) {
 
     uint8_t motion_en[3] = {0x21, 0x50, 0x00}; //Disables motion detection
 
-    uint8_t frame_lenH[3] = {0x03, 0x40, 0x01}; //Sets frame length MSB to 0x01
-    uint8_t frame_lenL[3] = {0x03, 0x41, 0x7A}; //Sets frame length LSB to 0x7A
-    uint8_t line_lenH[3] = {0x03, 0x42, 0x01}; //Sets line length MSB to 0x01
-    uint8_t line_lenL[3] = {0x03, 0x43, 0x77}; //Sets line length LSB to 0x77
+    uint8_t frame_lenH[3] = {0x03, 0x40, 0x00}; //Sets frame length MSB to 0x01
+    uint8_t frame_lenL[3] = {0x03, 0x41, 0x80}; //Sets frame length LSB to 0x7A
+    uint8_t line_lenH[3] = {0x03, 0x42, 0x00}; //Sets line length MSB to 0x01
+    uint8_t line_lenL[3] = {0x03, 0x43, 0xD7}; //Sets line length LSB to 0x77
 
     //uint8_t integH[3] = {0x02, 0x02, 0x01}; //Sets integration time MSB to 0x01
     //uint8_t integL[3] = {0x02, 0x03, 0x78}; //Sets integration time LSB to 0x78
 
-    uint8_t bin_x[3] = {0x03, 0x83, 0x01}; //Disables binning for x
-    uint8_t bin_y[3] = {0x03, 0x87, 0x01}; //Disables binning for y
-    uint8_t bin_en[3] = {0x03, 0x90, 0x00}; //Enables binning
+    uint8_t bin_x[3] = {0x03, 0x83, 0x03}; //Disables binning for x
+    uint8_t bin_y[3] = {0x03, 0x87, 0x03}; //Disables binning for y
+    uint8_t bin_en[3] = {0x03, 0x90, 0x01}; //Enables binning
 
     uint8_t flip[3] = {0x01, 0x01, 0x01}; //Flips image horizontally and vertically
 
     uint8_t grp[3] = {0x01, 0x04, 0x01}; //Sets group parameter to hold
 
-    uint8_t qvga[3] = {0x30, 0x10, 0x00}; //Enables QVGA (324 x 244)
+    uint8_t qvga[3] = {0x30, 0x10, 0x01}; //Enables QVGA (324 x 244)
 
     i2c_write_blocking(i2c_default, 0x24, reset, 3, false);
     i2c_write_blocking(i2c_default, 0x24, standby_mode, 3, false);
@@ -152,6 +154,8 @@ void cam_config(PIO pio, uint sm) {
     i2c_write_blocking(i2c_default, 0x24, grp, 3, false);
 
     i2c_write_blocking(i2c_default, 0x24, qvga, 3, false);
+
+    i2c_write_blocking(i2c_default, 0x24, test_pattern, 3, false);
 
     i2c_write_blocking(i2c_default, 0x24, stream_mode, 3, false);
     // cam_write(reset, 3);

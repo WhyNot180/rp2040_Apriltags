@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <float.h>
 #include "pico/stdlib.h"
 #include "pico/stdio.h"
 #include "hardware/pio.h"
@@ -8,11 +10,12 @@
 #include "pico/multicore.h"
 #include "hardware/vreg.h"
 #include "pico/float.h"
+#include "pico/double.h"
 #include "build/cam.pio.h"
 #include "board_i2c.h"
 #include "image_capture.h"
 #include "st7735.h"
-uint8_t capture_buffer[244][324];
+uint8_t capture_buffer[122*162];
 uint8_t displayBuf[80*160*2];
 
 #define FLAG_VALUE 123
@@ -44,19 +47,25 @@ void core1_entry() {
 
     while (true) {
         main_dma(pio, sm, dma_chan, capture_buffer, sizeof(capture_buffer), 16, 1);
-	    uint16_t index = 0;
-	    for (int y = 0; y < 160; y++) {
+	    
+        uint16_t index = 0;
+	    for (int y = 0; y < 120; y++) {
 	        for (int x = 0; x < 80; x++) {
-                uint8_t ny = (uint8_t)(2+240-(1.5125)*y);
-                uint8_t nx = (uint8_t)(2+40+1.5125*x);
-                uint8_t c = capture_buffer[ny][nx];
+                //uint8_t ny = (uint8_t)(2+240-(1.5125)*y);
+                //uint8_t nx = (uint8_t)(2+40+1.5125*x);
+                //uint8_t c = capture_buffer[ny][nx];
                 //printf("%i = %i\n", (2+320-2*y)*244+(2+40+2*x), capture_buffer[(2+320-2*y)*244+(2+40+2*x)]);
+                uint8_t c = capture_buffer[float2int((2+118-1*y)*162+(2+40+1*x))];
+                //uint8_t ny = float2int(0.75*y);
+                //uint8_t nx = float2int(2*x);
+                //uint8_t c = capture_buffer[ny][nx];
                 uint16_t imageRGB   = ST7735_COLOR565(c, c, c);
-                displayBuf[index++] = (uint8_t)(imageRGB >> 8);// & 0xFF;
-                displayBuf[index++] = (uint8_t)(imageRGB);//&0xFF;
+                displayBuf[index++] = (uint8_t)(imageRGB >> 8) & 0xFF;
+                displayBuf[index++] = (uint8_t)(imageRGB)&0xFF;
             }
 	    }
 	    ST7735_DrawImage(0, 0, 80, 160, displayBuf);
+        
 	}
 }
 
